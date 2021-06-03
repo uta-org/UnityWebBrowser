@@ -33,6 +33,8 @@
     <ProjectReference Include="..\ThirdParty\ClrZmq4\ZeroMQ.netcore.csproj" />
 
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.21216.1" />
+
+    <ProjectReference Include="..\UnityWebBrowser.Shared\UnityWebBrowser.Shared.csproj" />
   </ItemGroup>
 
   <!-- We need to copy different files depending on the OS -->

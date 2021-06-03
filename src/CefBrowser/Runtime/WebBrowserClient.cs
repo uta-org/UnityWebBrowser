@@ -2,9 +2,13 @@ using System;
 using System.Collections;
 using System.Diagnostics;
 using System.IO;
+using System.Net;
 using System.Threading.Tasks;
+using CoreRPC;
+using CoreRPC.Transport.Tcp;
 using UnityEngine;
 using UnityWebBrowser.EventData;
+using UnityWebBrowser.Shared;
 using ZeroMQ;
 using Debug = UnityEngine.Debug;
 
@@ -137,11 +141,15 @@ namespace UnityWebBrowser
         public CefLogSeverity logSeverity;
 
         private FileInfo cachePath;
-        private WebBrowserEventDispatcher eventDispatcher;
+
+        private TcpClientTransport client;
+        
+        //private WebBrowserEventDispatcher eventDispatcher;
 
         private FileInfo logPath;
 
         private Process serverProcess;
+        private IBrowser browser;
 
         /// <summary>
         ///     Texture that the browser will paint to
@@ -293,8 +301,11 @@ namespace UnityWebBrowser
             serverProcess.BeginErrorReadLine();
 
             BrowserTexture = new Texture2D((int) width, (int) height, TextureFormat.BGRA32, false, true);
-            eventDispatcher = new WebBrowserEventDispatcher(new TimeSpan(0, 0, 4), port);
-            eventDispatcher.StartDispatchingEvents();
+            client = new TcpClientTransport(IPAddress.Parse($"127.0.0.1"), port);
+            browser = new Engine().CreateProxy<IBrowser>(client);
+
+            //eventDispatcher = new WebBrowserEventDispatcher(new TimeSpan(0, 0, 4), port);
+            //eventDispatcher.StartDispatchingEvents();
         }
 
         /// <summary>
@@ -310,7 +321,8 @@ namespace UnityWebBrowser
             {
                 yield return new WaitForSecondsRealtime(eventPollingTime);
 
-                eventDispatcher.QueueEvent(new PingEvent(), LoadPixels);
+                //eventDispatcher.QueueEvent(new PingEvent(), LoadPixels);
+                Task.Run(GetPixels);
 
                 byte[] pixelData = Pixels;
 
@@ -320,6 +332,11 @@ namespace UnityWebBrowser
                 BrowserTexture.LoadRawTextureData(pixelData);
                 BrowserTexture.Apply(false);
             }
+        }
+
+        private async Task GetPixels()
+        {
+            Pixels = await browser.GetPixels();
         }
 
         private void LoadPixels(ZFrame frame)
@@ -424,12 +441,14 @@ namespace UnityWebBrowser
         /// <param name="chars"></param>
         internal void SendKeyboardEvent(int[] keysDown, int[] keysUp, string chars)
         {
+            /*
             eventDispatcher.QueueEvent(new KeyboardEvent
             {
                 KeysDown = keysDown,
                 KeysUp = keysUp,
                 Chars = chars
             }, HandelEvent);
+            */
         }
 
         /// <summary>
@@ -438,11 +457,13 @@ namespace UnityWebBrowser
         /// <param name="mousePos"></param>
         internal void SendMouseMoveEvent(Vector2 mousePos)
         {
+            /*
             eventDispatcher.QueueEvent(new MouseMoveEvent
             {
                 MouseX = (int) mousePos.x,
                 MouseY = (int) mousePos.y
             }, HandelEvent);
+            */
         }
 
         /// <summary>
@@ -455,6 +476,7 @@ namespace UnityWebBrowser
         internal void SendMouseClickEvent(Vector2 mousePos, int clickCount, MouseClickType clickType,
             MouseEventType eventType)
         {
+            /*
             eventDispatcher.QueueEvent(new MouseClickEvent
             {
                 MouseX = (int) mousePos.x,
@@ -463,6 +485,7 @@ namespace UnityWebBrowser
                 MouseClickType = clickType,
                 MouseEventType = eventType
             }, HandelEvent);
+            */
         }
 
         /// <summary>
@@ -473,12 +496,14 @@ namespace UnityWebBrowser
         /// <param name="mouseScroll"></param>
         internal void SendMouseScrollEvent(int mouseX, int mouseY, int mouseScroll)
         {
+            /*
             eventDispatcher.QueueEvent(new MouseScrollEvent
             {
                 MouseScroll = mouseScroll,
                 MouseX = mouseX,
                 MouseY = mouseY
             }, HandelEvent);
+            */
         }
 
         /// <summary>
@@ -488,11 +513,13 @@ namespace UnityWebBrowser
         /// <param name="url"></param>
         internal void SendButtonEvent(ButtonType buttonType, string url = null)
         {
+            /*
             eventDispatcher.QueueEvent(new ButtonEvent
             {
                 ButtonType = buttonType,
                 UrlToNavigate = url
             }, HandelEvent);
+            */
         }
 
         /// <summary>
@@ -501,10 +528,12 @@ namespace UnityWebBrowser
         /// <param name="html"></param>
         internal void LoadHtmlEvent(string html)
         {
+            /*
             eventDispatcher.QueueEvent(new LoadHtmlEvent
             {
                 Html = html
             }, HandelEvent);
+            */
         }
 
         /// <summary>
@@ -513,10 +542,12 @@ namespace UnityWebBrowser
         /// <param name="js"></param>
         internal void ExecuteJsEvent(string js)
         {
+            /*
             eventDispatcher.QueueEvent(new ExecuteJsEvent
             {
                 Js = js
             }, HandelEvent);
+            */
         }
 
         private void HandelEvent(ZFrame frame)
@@ -547,7 +578,7 @@ namespace UnityWebBrowser
             if (!IsRunning)
                 return;
 
-            eventDispatcher.Dispose();
+            //eventDispatcher.Dispose();
 
             WaitForServerProcess().ConfigureAwait(false);
 

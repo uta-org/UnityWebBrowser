@@ -74,27 +74,8 @@ namespace CefBrowserProcess
 			rootCommand.TreatUnmatchedTokensAsErrors = false;
 			rootCommand.Handler = CommandHandler.Create<LaunchArguments>(parsedArgs =>
 			{
-				//Is debug log enabled or not
-				Logger.DebugLog = parsedArgs.Debug;
-
-				//Create CefBrowserProcess class, which is responsible for basically everything
-				Core.CefBrowserProcess browserProcess = null;
-				try
-				{
-					//Create it with our parsed arguments
-					browserProcess = new Core.CefBrowserProcess(parsedArgs, args);
-				}
-				catch (Exception)
-				{
-					browserProcess?.Dispose();
-					Environment.Exit(0);
-					return;
-				}
+				Core.CefBrowserProcess browserProcess = new Core.CefBrowserProcess(parsedArgs, args);
 				
-				//Start our events loop
-				browserProcess.HandelEventsLoop();
-				
-				//The end
 				browserProcess.Dispose();
 			});
 			//Invoke the command line parser and start the handler (the stuff above)

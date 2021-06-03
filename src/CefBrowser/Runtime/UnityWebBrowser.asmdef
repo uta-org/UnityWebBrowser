@@ -15,7 +15,8 @@
     "overrideReferences": true,
     "precompiledReferences": [
         "ZeroMQ.dll",
-        "Newtonsoft.Json.dll"
+        "Newtonsoft.Json.dll",
+        "UnityWebBrowser.Shared.dll"
     ],
     "autoReferenced": true,
     "defineConstraints": [],
