@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using CoreRPC;
 using CoreRPC.Transport.Tcp;
 using UnityEngine;
-using UnityWebBrowser.EventData;
 using UnityWebBrowser.Shared;
 using ZeroMQ;
 using Debug = UnityEngine.Debug;
@@ -301,13 +300,31 @@ namespace UnityWebBrowser
             serverProcess.BeginErrorReadLine();
 
             BrowserTexture = new Texture2D((int) width, (int) height, TextureFormat.BGRA32, false, true);
+            
             client = new TcpClientTransport(IPAddress.Parse($"127.0.0.1"), port);
             browser = new Engine().CreateProxy<IBrowser>(client);
-
-            //eventDispatcher = new WebBrowserEventDispatcher(new TimeSpan(0, 0, 4), port);
-            //eventDispatcher.StartDispatchingEvents();
         }
 
+        public async Task RunLoop()
+        {
+            LogDebug("Starting communications between CEF process and Unity...");
+            IsRunning = true;
+
+            while (IsRunning)
+            {
+                await Task.Delay((int)(eventPollingTime * 1000));
+
+                byte[] pixelData = await browser.GetPixels();
+                
+                if(pixelData == null || pixelData.Length == 0)
+                    continue;
+                
+                BrowserTexture.LoadRawTextureData(pixelData);
+                BrowserTexture.Apply(false);
+            }
+        }
+
+        /*
         /// <summary>
         ///     Starts updating the <see cref="BrowserTexture" /> data
         /// </summary>
@@ -320,8 +337,7 @@ namespace UnityWebBrowser
             while (IsRunning)
             {
                 yield return new WaitForSecondsRealtime(eventPollingTime);
-
-                //eventDispatcher.QueueEvent(new PingEvent(), LoadPixels);
+                
                 Task.Run(GetPixels);
 
                 byte[] pixelData = Pixels;
@@ -333,6 +349,7 @@ namespace UnityWebBrowser
                 BrowserTexture.Apply(false);
             }
         }
+        */
 
         private async Task GetPixels()
         {
@@ -433,126 +450,9 @@ namespace UnityWebBrowser
 
         #region CEF Events
 
-        /// <summary>
-        ///     Sends a keyboard event to the CEF process
-        /// </summary>
-        /// <param name="keysDown"></param>
-        /// <param name="keysUp"></param>
-        /// <param name="chars"></param>
-        internal void SendKeyboardEvent(int[] keysDown, int[] keysUp, string chars)
+        public void SendMouseMoveEvent(Vector2 mousePos)
         {
-            /*
-            eventDispatcher.QueueEvent(new KeyboardEvent
-            {
-                KeysDown = keysDown,
-                KeysUp = keysUp,
-                Chars = chars
-            }, HandelEvent);
-            */
-        }
-
-        /// <summary>
-        ///     Sends a mouse event to the CEF process
-        /// </summary>
-        /// <param name="mousePos"></param>
-        internal void SendMouseMoveEvent(Vector2 mousePos)
-        {
-            /*
-            eventDispatcher.QueueEvent(new MouseMoveEvent
-            {
-                MouseX = (int) mousePos.x,
-                MouseY = (int) mousePos.y
-            }, HandelEvent);
-            */
-        }
-
-        /// <summary>
-        ///     Sends a mouse click event to the CEF process
-        /// </summary>
-        /// <param name="mousePos"></param>
-        /// <param name="clickCount"></param>
-        /// <param name="clickType"></param>
-        /// <param name="eventType"></param>
-        internal void SendMouseClickEvent(Vector2 mousePos, int clickCount, MouseClickType clickType,
-            MouseEventType eventType)
-        {
-            /*
-            eventDispatcher.QueueEvent(new MouseClickEvent
-            {
-                MouseX = (int) mousePos.x,
-                MouseY = (int) mousePos.y,
-                MouseClickCount = clickCount,
-                MouseClickType = clickType,
-                MouseEventType = eventType
-            }, HandelEvent);
-            */
-        }
-
-        /// <summary>
-        ///     Sends a mouse scroll event
-        /// </summary>
-        /// <param name="mouseX"></param>
-        /// <param name="mouseY"></param>
-        /// <param name="mouseScroll"></param>
-        internal void SendMouseScrollEvent(int mouseX, int mouseY, int mouseScroll)
-        {
-            /*
-            eventDispatcher.QueueEvent(new MouseScrollEvent
-            {
-                MouseScroll = mouseScroll,
-                MouseX = mouseX,
-                MouseY = mouseY
-            }, HandelEvent);
-            */
-        }
-
-        /// <summary>
-        ///     Sends a button event
-        /// </summary>
-        /// <param name="buttonType"></param>
-        /// <param name="url"></param>
-        internal void SendButtonEvent(ButtonType buttonType, string url = null)
-        {
-            /*
-            eventDispatcher.QueueEvent(new ButtonEvent
-            {
-                ButtonType = buttonType,
-                UrlToNavigate = url
-            }, HandelEvent);
-            */
-        }
-
-        /// <summary>
-        ///     Makes the cef client load html
-        /// </summary>
-        /// <param name="html"></param>
-        internal void LoadHtmlEvent(string html)
-        {
-            /*
-            eventDispatcher.QueueEvent(new LoadHtmlEvent
-            {
-                Html = html
-            }, HandelEvent);
-            */
-        }
-
-        /// <summary>
-        ///     Executes JS in the cef client
-        /// </summary>
-        /// <param name="js"></param>
-        internal void ExecuteJsEvent(string js)
-        {
-            /*
-            eventDispatcher.QueueEvent(new ExecuteJsEvent
-            {
-                Js = js
-            }, HandelEvent);
-            */
-        }
-
-        private void HandelEvent(ZFrame frame)
-        {
-            frame.Dispose();
+            browser.SendMouseMoveEvent((int) mousePos.x, (int) mousePos.y);
         }
 
         #endregion

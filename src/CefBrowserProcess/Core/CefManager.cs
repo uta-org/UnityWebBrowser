@@ -1,5 +1,4 @@
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 using CefBrowserProcess.Browser;
 using CefBrowserProcess.Models;
@@ -104,10 +103,110 @@ namespace CefBrowserProcess.Core
 	        CefRuntime.Shutdown();
         }
 
+        #region Browser RPC
+
         public Task<byte[]> GetPixels()
         {
 	        Logger.Debug("Responding with pixel data...");
 	        return Task.FromResult(cefClient.GetPixels());
         }
+
+        public Task SendKeyDownEvent(int keyCode)
+        {
+	        cefClient.KeyEvent(new CefKeyEvent
+	        {
+		        WindowsKeyCode = keyCode,
+		        EventType = CefKeyEventType.KeyDown
+	        });
+	        return Task.CompletedTask;
+        }
+
+        public Task SendKeyUpEvent(int keyCode)
+        {
+	        cefClient.KeyEvent(new CefKeyEvent
+	        {
+		        WindowsKeyCode = keyCode,
+		        EventType = CefKeyEventType.KeyDown
+	        });
+	        return Task.CompletedTask;
+        }
+
+        public Task SendKeyChars(string chars)
+        {
+	        foreach (char c in chars)
+	        {
+		        cefClient.KeyEvent(new CefKeyEvent
+		        {
+#if WINDOWS
+					WindowsKeyCode = c,
+#else
+			        Character = c,
+#endif
+			        EventType = CefKeyEventType.Char
+		        });
+	        }
+	        return Task.CompletedTask;
+        }
+
+        public Task SendMouseMoveEvent(int x, int y)
+        {
+	        Logger.Debug("Got mouse move event.");
+	        cefClient.MouseMoveEvent(new CefMouseEvent
+	        {
+		        X = x,
+		        Y = y
+	        });
+	        return Task.CompletedTask;
+        }
+
+        public Task SendSendScrollEvent(int x, int y, int scroll)
+        {
+	        cefClient.MouseScrollEvent(new CefMouseEvent
+	        {
+		        X = x,
+		        Y = y
+	        }, scroll);
+	        return Task.CompletedTask;
+        }
+
+        public Task SendMouseClickDownEvent(int x, int y, int clickCount, MouseClickType clickType)
+        {
+	        cefClient.MouseClickEvent(new CefMouseEvent
+	        {
+		        X = x,
+		        Y = y
+	        }, clickCount, (CefMouseButtonType)clickType, false);
+	        return Task.CompletedTask;
+        }
+
+        public Task SendMouseClickUpEvent(int x, int y, int clickCount, MouseClickType clickType)
+        {
+	        cefClient.MouseClickEvent(new CefMouseEvent
+	        {
+		        X = x,
+		        Y = y
+	        }, clickCount, (CefMouseButtonType)clickType, true);
+	        return Task.CompletedTask;
+        }
+
+        public Task LoadUrl(string url)
+        {
+	        cefClient.LoadUrl(url);
+	        return Task.CompletedTask;
+        }
+
+        public Task LoadHtml(string html)
+        {
+	        cefClient.LoadHtml(html);
+	        return Task.CompletedTask;
+        }
+
+        public Task ExecuteJs(string js)
+        {
+	        cefClient.ExecuteJs(js);
+	        return Task.CompletedTask;
+        }
+        
+        #endregion
     }
 }

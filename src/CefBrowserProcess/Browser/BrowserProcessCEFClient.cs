@@ -1,6 +1,5 @@
 ﻿using System;
 using CefBrowserProcess.Models;
-using UnityWebBrowser.EventData;
 using Xilium.CefGlue;
 
 namespace CefBrowserProcess.Browser
@@ -63,134 +62,27 @@ namespace CefBrowserProcess.Browser
 			return renderHandler.Pixels;
 		}
 
-		/// <summary>
-		///		Process a <see cref="KeyboardEvent"/>
-		/// </summary>
-		/// <param name="keyboardEvent"></param>
-		public void ProcessKeyboardEvent(KeyboardEvent keyboardEvent)
-		{
-			//Keys down
-			foreach (int i in keyboardEvent.KeysDown)
-			{
-				KeyEvent(new CefKeyEvent
-				{
-					WindowsKeyCode = i,
-					EventType = CefKeyEventType.KeyDown
-				});
-			}
-
-			//Keys up
-			foreach (int i in keyboardEvent.KeysUp)
-			{
-				KeyEvent(new CefKeyEvent
-				{
-					WindowsKeyCode = i,
-					EventType = CefKeyEventType.KeyUp
-				});
-			}
-
-			//Chars
-			foreach (char c in keyboardEvent.Chars)
-			{
-				KeyEvent(new CefKeyEvent
-				{
-#if WINDOWS
-					WindowsKeyCode = c,
-#else
-					Character = c,
-#endif
-					EventType = CefKeyEventType.Char
-				});
-			}
-		}
-
-		/// <summary>
-		///		Process a <see cref="UnityWebBrowser.EventData.MouseMoveEvent"/>
-		/// </summary>
-		/// <param name="mouseEvent"></param>
-		public void ProcessMouseMoveEvent(MouseMoveEvent mouseEvent)
-		{
-			MouseMoveEvent(new CefMouseEvent
-			{
-				X = mouseEvent.MouseX,
-				Y = mouseEvent.MouseY
-			});
-		}
-
-		/// <summary>
-		///		Process a <see cref="UnityWebBrowser.EventData.MouseClickEvent"/>
-		/// </summary>
-		/// <param name="mouseClickEvent"></param>
-		public void ProcessMouseClickEvent(MouseClickEvent mouseClickEvent)
-		{
-			MouseClickEvent(new CefMouseEvent
-			{
-				X = mouseClickEvent.MouseX,
-				Y = mouseClickEvent.MouseY
-			}, mouseClickEvent.MouseClickCount, 
-				(CefMouseButtonType)mouseClickEvent.MouseClickType, 
-				mouseClickEvent.MouseEventType == MouseEventType.Up);
-		}
-
-		/// <summary>
-		///		Process a <see cref="UnityWebBrowser.EventData.MouseScrollEvent"/>
-		/// </summary>
-		/// <param name="mouseScrollEvent"></param>
-		public void ProcessMouseScrollEvent(MouseScrollEvent mouseScrollEvent)
-		{
-			MouseScrollEvent(new CefMouseEvent
-			{
-				X = mouseScrollEvent.MouseX,
-				Y = mouseScrollEvent.MouseY
-			}, mouseScrollEvent.MouseScroll);
-		}
-
-		/// <summary>
-		///		Process a <see cref="ButtonEvent"/>
-		/// </summary>
-		/// <param name="buttonEvent"></param>
-		public void ProcessButtonEvent(ButtonEvent buttonEvent)
-		{
-			switch (buttonEvent.ButtonType)
-			{
-				case ButtonType.Back:
-					GoBack();
-					break;
-				case ButtonType.Forward:
-					GoForward();
-					break;
-				case ButtonType.Refresh:
-					Refresh();
-					break;
-				case ButtonType.NavigateUrl:
-					LoadUrl(buttonEvent.UrlToNavigate);
-					break;
-				default:
-					throw new ArgumentOutOfRangeException();
-			}
-		}
-
-		private void KeyEvent(CefKeyEvent keyEvent)
+		public void KeyEvent(CefKeyEvent keyEvent)
 		{
 			browserHost.SendKeyEvent(keyEvent);
 		}
 
-		private void MouseMoveEvent(CefMouseEvent mouseEvent)
+		public void MouseMoveEvent(CefMouseEvent mouseEvent)
 		{
 			browserHost.SendMouseMoveEvent(mouseEvent, false);
 		}
 
-		private void MouseClickEvent(CefMouseEvent mouseEvent, int clickCount, CefMouseButtonType button, bool mouseUp)
+		public void MouseClickEvent(CefMouseEvent mouseEvent, int clickCount, CefMouseButtonType button, bool mouseUp)
 		{
 			browserHost.SendMouseClickEvent(mouseEvent, button, mouseUp, clickCount);
 		}
 
-		private void MouseScrollEvent(CefMouseEvent mouseEvent, int scroll)
+		public void MouseScrollEvent(CefMouseEvent mouseEvent, int scroll)
 		{
 			browserHost.SendMouseWheelEvent(mouseEvent, 0, scroll);
 		}
 
-		private void LoadUrl(string url)
+		public void LoadUrl(string url)
 		{
 			mainFrame.LoadUrl(url);
 		}

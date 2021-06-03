@@ -1,10 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using UnityWebBrowser.EventData;
 using UnityWebBrowser.Input;
 
 #if ENABLE_INPUT_SYSTEM
@@ -48,7 +48,7 @@ namespace UnityWebBrowser
             if (!browserClient.IsRunning)
                 throw new WebBrowserNotReadyException("The web browser is not ready right now!");
 
-            browserClient.SendButtonEvent(ButtonType.Back);
+            //browserClient.SendButtonEvent(ButtonType.Back);
         }
 
 	    /// <summary>
@@ -60,7 +60,7 @@ namespace UnityWebBrowser
             if (!browserClient.IsRunning)
                 throw new WebBrowserNotReadyException("The web browser is not ready right now!");
 
-            browserClient.SendButtonEvent(ButtonType.Forward);
+            //browserClient.SendButtonEvent(ButtonType.Forward);
         }
 
 	    /// <summary>
@@ -77,7 +77,7 @@ namespace UnityWebBrowser
             if (!browserClient.IsRunning)
                 throw new WebBrowserNotReadyException("The web browser is not ready right now!");
 
-            browserClient.SendButtonEvent(ButtonType.NavigateUrl, url);
+            //browserClient.SendButtonEvent(ButtonType.NavigateUrl, url);
         }
 
 	    /// <summary>
@@ -89,7 +89,7 @@ namespace UnityWebBrowser
             if (!browserClient.IsRunning)
                 throw new WebBrowserNotReadyException("The web browser is not ready right now!");
 
-            browserClient.SendButtonEvent(ButtonType.Refresh);
+            //browserClient.SendButtonEvent(ButtonType.Refresh);
         }
 
 	    /// <summary>
@@ -106,7 +106,7 @@ namespace UnityWebBrowser
             if (!browserClient.IsRunning)
                 throw new WebBrowserNotReadyException("The web browser is not ready right now!");
 
-            browserClient.LoadHtmlEvent(html);
+            //browserClient.LoadHtmlEvent(html);
         }
 
 	    /// <summary>
@@ -121,14 +121,16 @@ namespace UnityWebBrowser
             if (!browserClient.IsRunning)
                 throw new WebBrowserNotReadyException("The web browser is not ready right now!");
 
-            browserClient.ExecuteJsEvent(js);
+            //browserClient.ExecuteJsEvent(js);
         }
 
         private void Start()
         {
             //Start the browser client
             browserClient.Init();
-            StartCoroutine(browserClient.Start());
+            //StartCoroutine(browserClient.Start());
+            //Task.Run(browserClient.RunLoop);
+            browserClient.RunLoop().ConfigureAwait(false);
 
             image = GetComponent<RawImage>();
             image.texture = browserClient.BrowserTexture;
@@ -182,7 +184,7 @@ namespace UnityWebBrowser
 				//Send our input if any key is down or up
 				if (keysDown.Count != 0 || keysUp.Count != 0 || !string.IsNullOrEmpty(currentInputBuffer))
 				{
-					browserClient.SendKeyboardEvent(keysDown.ToArray(), keysUp.ToArray(), currentInputBuffer);
+					//browserClient.SendKeyboardEvent(keysDown.ToArray(), keysUp.ToArray(), currentInputBuffer);
 					currentInputBuffer = "";
 				}
 #else
@@ -235,8 +237,8 @@ namespace UnityWebBrowser
 #endif
                     scroll *= browserClient.BrowserTexture.height;
 
-                    if (scroll != 0)
-                        browserClient.SendMouseScrollEvent((int) pos.x, (int) pos.y, (int) scroll);
+                    //if (scroll != 0)
+                        //browserClient.SendMouseScrollEvent((int) pos.x, (int) pos.y, (int) scroll);
                 }
 
                 yield return 0;
@@ -245,6 +247,7 @@ namespace UnityWebBrowser
 
         public void OnPointerDown(PointerEventData eventData)
         {
+            /*
             MouseClickType clickType = eventData.button switch
             {
                 PointerEventData.InputButton.Left => MouseClickType.Left,
@@ -252,13 +255,15 @@ namespace UnityWebBrowser
                 PointerEventData.InputButton.Middle => MouseClickType.Middle,
                 _ => throw new ArgumentOutOfRangeException()
             };
+            */
 
-            if (GetMousePosition(out Vector2 pos))
-                browserClient.SendMouseClickEvent(pos, eventData.clickCount, clickType, MouseEventType.Down);
+            //if (GetMousePosition(out Vector2 pos))
+                //browserClient.SendMouseClickEvent(pos, eventData.clickCount, clickType, MouseEventType.Down);
         }
 
         public void OnPointerUp(PointerEventData eventData)
         {
+            /*
             MouseClickType clickType = eventData.button switch
             {
                 PointerEventData.InputButton.Left => MouseClickType.Left,
@@ -266,9 +271,10 @@ namespace UnityWebBrowser
                 PointerEventData.InputButton.Middle => MouseClickType.Middle,
                 _ => throw new ArgumentOutOfRangeException()
             };
+            */
 
-            if (GetMousePosition(out Vector2 pos))
-                browserClient.SendMouseClickEvent(pos, eventData.clickCount, clickType, MouseEventType.Up);
+            //if (GetMousePosition(out Vector2 pos))
+                //browserClient.SendMouseClickEvent(pos, eventData.clickCount, clickType, MouseEventType.Up);
         }
 
         private bool GetMousePosition(out Vector2 pos)
