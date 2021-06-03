@@ -4,3 +4,6 @@
 [submodule "ThirdParty/CefGlue"]
 	path = src/ThirdParty/CefGlue
 	url = https://gitlab.com/Voltstro-Studios/WebBrowser/cefglue.git
+[submodule "ThirdParty/CoreRPC"]
+	path = src/ThirdParty/CoreRPC
+	url = https://github.com/kekekeks/CoreRPC

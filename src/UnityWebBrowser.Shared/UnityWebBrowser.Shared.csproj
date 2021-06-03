@@ -17,11 +17,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="$(CoreRPCPath)**\*.cs" 
-                 Exclude="$(CoreRPCPath)\Transport\NamedPipe\*;
-                          $(CoreRPCPath)\Transport\Http\*;
-                          $(CoreRPCPath)\Serialization\XmlMethodCallSerializer.cs;"
-                 LinkBase="CoreRPC/" />
+        <Compile Include="$(CoreRPCPath)**\*.cs" Exclude="$(CoreRPCPath)\Transport\NamedPipe\*;&#xA;                          $(CoreRPCPath)\Transport\Http\*;&#xA;                          $(CoreRPCPath)\Serialization\XmlMethodCallSerializer.cs;&#xA;                          $(CoreRPCPath)\Serialization\JsonMethodCallSerializer.cs" LinkBase="CoreRPC/" />
     </ItemGroup>
 
 </Project>
