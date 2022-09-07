@@ -1,6 +1,6 @@
 // UnityWebBrowser (UWB)
 // Copyright (c) 2021-2022 Voltstro-Studios
-// 
+//
 // This project is under the MIT license. See the LICENSE.md file for more details.
 
 using System;
@@ -31,7 +31,7 @@ public abstract class EngineEntryPoint : IDisposable
     ///     Allows the engine to fire events on the Unity client side
     /// </summary>
     protected ClientControlsActions ClientControlsActions { get; private set; }
-    
+
     /// <summary>
     ///     Call to invoke new popups
     /// </summary>
@@ -100,7 +100,7 @@ public abstract class EngineEntryPoint : IDisposable
         Option<FileInfo> cachePath = new("-cache-path",
             () => null,
             "The path to the cache (null for no cache)");
-        Option<PopupAction> popupAction = new("-popup-action", 
+        Option<PopupAction> popupAction = new("-popup-action",
             () => PopupAction.Ignore,
             "What action to take when dealing with a popup");
 
@@ -119,7 +119,7 @@ public abstract class EngineEntryPoint : IDisposable
         Option<string> proxyPassword = new("-proxy-password",
             () => null,
             "The password to use in the proxy auth");
-        
+
         //Logging
         Option<FileInfo> logPath = new("-log-path",
             () => new FileInfo("engine.log"),
@@ -147,12 +147,23 @@ public abstract class EngineEntryPoint : IDisposable
         RootCommand rootCommand = new()
         {
             initialUrl,
-            width, height,
-            javaScript, webRtc, localStorage, remoteDebugging, cachePath, popupAction,
+            width,
+            height,
+            javaScript,
+            webRtc,
+            localStorage,
+            remoteDebugging,
+            cachePath,
+            popupAction,
             backgroundColor,
-            proxyServer, proxyUsername, proxyPassword,
-            logPath, logSeverity,
-            communicationLayerPath, inLocation, outLocation,
+            proxyServer,
+            proxyUsername,
+            proxyPassword,
+            logPath,
+            logSeverity,
+            communicationLayerPath,
+            inLocation,
+            outLocation,
             startDelay
         };
         rootCommand.Description =
@@ -172,12 +183,12 @@ public abstract class EngineEntryPoint : IDisposable
             startDelay);
         rootCommand.SetHandler(parsedArgs =>
         {
-            if(parsedArgs.StartDelay != 0)
+            if (parsedArgs.StartDelay != 0)
                 Thread.Sleep((int)parsedArgs.StartDelay);
-            
+
             if (ShouldInitLogger(parsedArgs, args))
                 Logger.Init(parsedArgs.LogSeverity);
-            
+
             ClientControlsActions = new ClientControlsActions();
             PopupManager = new EnginePopupManager();
 
@@ -188,7 +199,7 @@ public abstract class EngineEntryPoint : IDisposable
             }
             catch (Exception ex)
             {
-                Logger.Error(ex, $"{Logger.BaseLoggingTag}: Uncaught exception occured in early init!");
+                Logger.Error(ex, $"{Logger.BaseLoggingTag}: Uncaught exception occured in early init!\n{ex}");
                 ShutdownAndExitWithError();
                 return;
             }
@@ -260,7 +271,7 @@ public abstract class EngineEntryPoint : IDisposable
             try
             {
                 ipcClient.Connect();
-                
+
                 ClientControlsActions.SetIpcClient(ipcClient);
                 PopupManager.SetIpcClient(ipcClient);
             }
@@ -320,5 +331,5 @@ public abstract class EngineEntryPoint : IDisposable
         ipcHost?.Dispose();
     }
 
-    #endregion
+    #endregion Destroy
 }
