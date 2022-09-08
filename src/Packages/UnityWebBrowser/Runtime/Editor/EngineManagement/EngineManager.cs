@@ -1,6 +1,6 @@
 // UnityWebBrowser (UWB)
 // Copyright (c) 2021-2022 Voltstro-Studios
-// 
+//
 // This project is under the MIT license. See the LICENSE.md file for more details.
 
 #if UNITY_EDITOR
@@ -15,9 +15,9 @@ namespace VoltstroStudios.UnityWebBrowser.Editor.EngineManagement
 {
     public static class EngineManager
     {
-        public static string GetEngineDirectory(Engine engine, Platform platform)
+        public static string GetEngineDirectory(Core.Engines.Engine engine, Platform platform)
         {
-            Engine.EnginePlatformFiles files = engine.EngineFiles.FirstOrDefault(x => x.platform == platform);
+            Core.Engines.Engine.EnginePlatformFiles files = engine.EngineFiles.FirstOrDefault(x => x.platform == platform);
             if (files.engineFileLocation == null)
             {
                 Debug.LogError(engine.EngineFilesNotFoundError);
@@ -27,12 +27,12 @@ namespace VoltstroStudios.UnityWebBrowser.Editor.EngineManagement
             return Path.GetFullPath(files.engineFileLocation);
         }
 
-        public static string GetEngineDirectory(Engine engine)
+        public static string GetEngineDirectory(Core.Engines.Engine engine)
         {
             return GetEngineDirectory(engine, GetCurrentEditorPlatform());
         }
 
-        public static string GetEngineProcessFullPath(Engine engine, Platform platform)
+        public static string GetEngineProcessFullPath(Core.Engines.Engine engine, Platform platform)
         {
             string appPath = $"{GetEngineDirectory(engine, platform)}{engine.GetEngineExecutableName()}";
             if (platform == Platform.Windows64)
@@ -41,7 +41,7 @@ namespace VoltstroStudios.UnityWebBrowser.Editor.EngineManagement
             return Path.GetFullPath(appPath);
         }
 
-        public static string GetEngineProcessFullPath(Engine engine)
+        public static string GetEngineProcessFullPath(Core.Engines.Engine engine)
         {
             return GetEngineProcessFullPath(engine, GetCurrentEditorPlatform());
         }

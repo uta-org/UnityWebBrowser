@@ -6,7 +6,8 @@
     "VoltstroStudios.UnityWebBrowser.UnixSupport",
     "Unity.TextMeshPro",
     "Unity.InputSystem",
-    "UniTask"
+    "UniTask",
+	"UnityWebBrowserPlugins"
   ],
   "includePlatforms": [
     "Editor",

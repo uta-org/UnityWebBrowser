@@ -14,7 +14,6 @@ using Unity.Collections;
 using Unity.Profiling;
 using UnityEngine;
 using VoltstroStudios.UnityWebBrowser.Communication;
-using VoltstroStudios.UnityWebBrowser.Core.Engines;
 using VoltstroStudios.UnityWebBrowser.Core.Popups;
 using VoltstroStudios.UnityWebBrowser.Events;
 using VoltstroStudios.UnityWebBrowser.Helper;
@@ -56,7 +55,7 @@ namespace VoltstroStudios.UnityWebBrowser.Core
         ///     The active browser engine this instance is using
         /// </summary>
         [Header("Browser Settings")] [Tooltip("The active browser engine this instance is using")]
-        public Engine engine;
+        public Engines.Engine engine;
 
         /// <summary>
         ///     The initial URl the browser will start at

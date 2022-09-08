@@ -33,6 +33,7 @@ namespace VoltstroStudios.UnityWebBrowser.Logging
 
         public void Error(object message)
         {
+            //UnityEngine.Debug.Log(message.GetType());
             logger.LogError(LoggingTag, message);
         }
     }

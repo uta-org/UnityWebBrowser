@@ -1,6 +1,6 @@
 // UnityWebBrowser (UWB)
 // Copyright (c) 2021-2022 Voltstro-Studios
-// 
+//
 // This project is under the MIT license. See the LICENSE.md file for more details.
 
 #if UNITY_EDITOR
@@ -35,7 +35,7 @@ namespace VoltstroStudios.UnityWebBrowser.Editor.EngineManagement
 
             Debug.Log("Copying engine process files...");
 
-            List<Engine> engines = EditorHelper.FindAssetsByType<Engine>();
+            List<Core.Engines.Engine> engines = EditorHelper.FindAssetsByType<Core.Engines.Engine>();
 
             if (engines.Count == 0)
             {
@@ -77,12 +77,12 @@ namespace VoltstroStudios.UnityWebBrowser.Editor.EngineManagement
 
             buildUwbPath = Path.GetFullPath(buildUwbPath);
 
-            foreach (Engine engine in engines)
+            foreach (Core.Engines.Engine engine in engines)
                 if (engine.EngineFiles.Any(x => x.platform == buildPlatform))
                 {
                     Debug.Log("Copying UWB engine files...");
 
-                    Engine.EnginePlatformFiles engineFiles =
+                    Core.Engines.Engine.EnginePlatformFiles engineFiles =
                         engine.EngineFiles.First(x => x.platform == buildPlatform);
 
                     //Get the location where we are copying all the files

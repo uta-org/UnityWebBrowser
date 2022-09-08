@@ -1,6 +1,6 @@
 // UnityWebBrowser (UWB)
 // Copyright (c) 2021-2022 Voltstro-Studios
-// 
+//
 // This project is under the MIT license. See the LICENSE.md file for more details.
 
 using System;
@@ -14,11 +14,14 @@ using UnityEngine.Scripting;
 using UnityEngine.UI;
 using VoltstroStudios.UnityWebBrowser.Core.Engines;
 using VoltstroStudios.UnityWebBrowser.Logging;
+
 #if UNITY_EDITOR_LINUX || UNITY_STANDALONE_LINUX
 using VoltstroStudios.UnityWebBrowser.UnixSupport;
 #endif
 #if UNITY_EDITOR
+
 using VoltstroStudios.UnityWebBrowser.Editor.EngineManagement;
+
 #endif
 
 namespace VoltstroStudios.UnityWebBrowser.Helper
@@ -48,7 +51,7 @@ namespace VoltstroStudios.UnityWebBrowser.Helper
         ///     Gets the folder that the UWB process application lives in
         /// </summary>
         /// <returns></returns>
-        public static string GetBrowserEnginePath(Engine engine)
+        public static string GetBrowserEnginePath(Core.Engines.Engine engine)
         {
             //Editor
 #if UNITY_EDITOR
@@ -66,7 +69,7 @@ namespace VoltstroStudios.UnityWebBrowser.Helper
         ///     Get a direct path to the UWB process application
         /// </summary>
         /// <returns></returns>
-        public static string GetBrowserEngineProcessPath(Engine engine)
+        public static string GetBrowserEngineProcessPath(Core.Engines.Engine engine)
         {
 #if UNITY_EDITOR
             return EngineManager.GetEngineProcessFullPath(engine);
@@ -143,7 +146,7 @@ namespace VoltstroStudios.UnityWebBrowser.Helper
         /// <param name="onLogEvent"></param>
         /// <param name="onErrorLogEvent"></param>
         /// <returns></returns>
-        internal static Process CreateEngineProcess(IWebBrowserLogger logger, Engine engine, string arguments,
+        internal static Process CreateEngineProcess(IWebBrowserLogger logger, Core.Engines.Engine engine, string arguments,
             DataReceivedEventHandler onLogEvent, DataReceivedEventHandler onErrorLogEvent)
         {
             string engineFullProcessPath = GetBrowserEngineProcessPath(engine);
